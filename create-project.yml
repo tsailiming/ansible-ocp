@@ -1,0 +1,17 @@
+---
+- name: Create a project in OCP
+  hosts: all
+  
+  roles:
+    - kevensen.oc
+
+  tasks:
+    - include_vars: "token.yml"
+    - name: Create "{{ project_name }}" Project
+      oc:
+        host: ocp-master1.lab.ltsai.com
+        state: present
+        name: "{{ project_name }}"
+        kind: Project
+        validate_certs: false
+        token: "{{ token }}"
