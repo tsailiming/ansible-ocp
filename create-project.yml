@@ -35,7 +35,7 @@
               requests.cpu: "{{ requests_cpu }} " 
               requests.memory: "{{ requests_memory }}"
               limits.cpu: "{{ limits_cpu }}" 
-              imits.memory: "{{ limits_memory }}"
+              limits.memory: "{{ limits_memory }}"
         state: present
         validate_certs: false
         token: "{{ token }}"
