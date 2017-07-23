@@ -1,6 +1,6 @@
 ---
 - name: Create a project in OCP
-  hosts: all
+  hosts: localhost
   
   roles:
     - kevensen.oc
@@ -33,9 +33,9 @@
             hard:
               pods: "{{ pods }}" 
               requests.cpu: "{{ requests_cpu }} " 
-              requests.memory: "{{ requests_memory }}Gi"
+              requests.memory: "{{ requests_memory }}"
               limits.cpu: "{{ limits_cpu }}" 
-              limits.memory: "{{ limits_memory }}Gi"
+              imits.memory: "{{ limits_memory }}"
         state: present
         validate_certs: false
         token: "{{ token }}"
