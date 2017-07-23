@@ -5,13 +5,37 @@
   roles:
     - kevensen.oc
 
+  vars:
+    host: ocp-master1.lab.ltsai.com
+
   tasks:
     - include_vars: "token.yml"
+
     - name: Create "{{ project_name }}" Project
       oc:
-        host: ocp-master1.lab.ltsai.com
+        host: "{{ host }}"
         state: present
         name: "{{ project_name }}"
         kind: Project
+        validate_certs: false
+        token: "{{ token }}"
+
+    - name: Create "{{ project_name }}" Quota
+      oc:
+        host: "{{ host }}"
+        inline:
+          apiVersion: v1
+          kind: ResourceQuota
+          metadata:
+            name: compute-resources
+            namespace: "{{ project_name }}"
+          spec:
+            hard:
+              pods: "{{ pods }}" 
+              requests.cpu: "{{ requests_cpu }} " 
+              requests.memory: "{{ requests_memory }}Gi"
+              limits.cpu: "{{ limits_cpu }}" 
+              limits.memory: "{{ limits_memory }}Gi"
+        state: present
         validate_certs: false
         token: "{{ token }}"
