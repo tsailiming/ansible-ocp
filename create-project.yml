@@ -54,4 +54,4 @@
         body: {"action" : "refresh"}
         body_format: json
         validate_certs: false
-      when: "{{ refresh_miq }} == true"
+      when: refresh_miq == true
