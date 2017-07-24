@@ -7,6 +7,11 @@
 
   vars:
     host: ocp-master1.lab.ltsai.com
+    refresh_miq: false
+    miq_server:
+    miq_provider_id:
+    miq_username: admin
+    miq_password: smartvm
 
   tasks:
     - include_vars: "token.yml"
@@ -39,3 +44,14 @@
         state: present
         validate_certs: false
         token: "{{ token }}"
+
+    - name: Refresh MIQ provider
+      uri:
+        url: "https://{{ miq_server }}/api/providers/{{ miq_provider_id }}"
+        method: POST
+        user: "{{ miq_username }}"
+        password: "{{ miq_password }}"
+        body: {"action" : "refresh"}
+        body_format: json
+        validate_certs: false
+      when: "{{ refresh_miq }} == true"
