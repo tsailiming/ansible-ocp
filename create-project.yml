@@ -1,50 +1,54 @@
 ---
 - name: Create a project in OCP
   hosts: localhost
-  
-  roles:
-    - kevensen.oc
+  connection: local
+  gather_facts: no
+
 
   vars:
-    host: ocp-master1.lab.ltsai.com
+    ocp_host: 
+    ocp_api_key: 
+
     refresh_miq: false
     miq_server:
     miq_provider_id:
     miq_username: admin
     miq_password: smartvm
 
-  tasks:
-    - include_vars: "token.yml"
+    project_name: 
 
+  tasks:        
     - name: Create "{{ project_name }}" Project
-      oc:
-        host: "{{ host }}"
-        state: present
-        name: "{{ project_name }}"
+      openshift_raw:
+        host: "{{ ocp_host }}"
+        api_key: "{{ ocp_api_key }}"
+        verify_ssl: no
+        api_version: v1
         kind: Project
-        validate_certs: false
-        token: "{{ token }}"
+        name: "{{ project_name }}"
+        # description: Testing
+        # display_name: "This is a test project."
+        state: present
 
     - name: Create "{{ project_name }}" Quota
-      oc:
-        host: "{{ host }}"
-        inline:
+      openshift_raw:
+        host: "{{ ocp_host }}"
+        api_key: "{{ ocp_api_key }}"
+        verify_ssl: no
+        namespace: "{{ project_name }}"
+        state: present
+        definition:
           apiVersion: v1
           kind: ResourceQuota
           metadata:
             name: compute-resources
-            namespace: "{{ project_name }}"
           spec:
             hard:
-              pods: "{{ pods }}" 
               requests.cpu: "{{ requests_cpu }} " 
-              requests.memory: "{{ requests_memory }}"
+              requests.memory: "{{ requests_memory }}Gi"
               limits.cpu: "{{ limits_cpu }}" 
-              limits.memory: "{{ limits_memory }}"
-        state: present
-        validate_certs: false
-        token: "{{ token }}"
-
+              limits.memory: "{{ limits_memory }}Gi"
+          
     - name: Refresh MIQ provider
       uri:
         url: "https://{{ miq_server }}/api/providers/{{ miq_provider_id }}"
